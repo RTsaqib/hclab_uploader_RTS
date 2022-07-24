@@ -1,4 +1,3 @@
-#!.venv\scripts\pythonw.exe
 import pystray
 import time
 import PIL.Image

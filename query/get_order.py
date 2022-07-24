@@ -13,21 +13,22 @@ def select(engine:object, site:str)->list:
   '''
   
   sql = """
-    select id, 
+    select
+    98 as id,
     message_dt,
     ono,
     order_control,
     pid,
     apid,
-    pname,
+    name as pname,
     address1, address2, address3, address4,
     ptype,
     birth_dt,
     sex,
     '' as lno,
     request_dt,
-    source,
-    clinician,
+    concat(source_cd, '^', source_nm) AS source,
+    concat(clinician_cd, '^', clinician_nm) AS clinician,
     room_no,
     priority,
     '' as pstatus,
@@ -35,12 +36,12 @@ def select(engine:object, site:str)->list:
     visitno,
     order_testid,
     address4 as email
-    from dbo."Order" where OrganizationCode = ?
+    from lis_order WHERE ono="LAB0008" and flag= 0
   """
-  param = (site)
+  #param = (site)
   try:
     with engine.connect() as conn:
-        records = conn.execute(sql,param).fetchall()
+        records = conn.execute(sql).fetchall()
 
   except SQLAlchemyError as e:
     raise Exception(f'HIS Database not found. {e}')

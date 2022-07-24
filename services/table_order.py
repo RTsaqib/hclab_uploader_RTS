@@ -23,7 +23,7 @@ class TableOrder(Service):
     self.hclabConnection = db.create_engine(f"oracle://{ora['user']}:{ora['pass']}@{ora['host']}:{ora['port']}/{ora['db']}")
 
     his = config['his']
-    self.hisConnection = db.create_engine(f"mssql+pyodbc://{his['user']}:{his['pass']}@{his['dsn']}")
+    self.hisConnection = db.create_engine(f"mysql+pymysql://{his['user']}:{his['pass']}@{his['host']}:{his['port']}/{his['db']}")
 
   def run(self):
     
@@ -34,8 +34,8 @@ class TableOrder(Service):
     while self._runner.is_set():
 
       try: 
-        print("From Order")
-        # self.__process()
+        #print("From Order")
+        self.__process()
       
       except ValueError as error:
         logger.error(error)
@@ -99,13 +99,13 @@ class TableOrder(Service):
       
       mapped_tests = set()
 
-      if not record['order_testid'] is None:
-        tests = [t for t in record['order_testid'].split('~')]
-        for test in tests:
-          mapped_test = Item(self.hclabConnection, test, is_map=True).get_mapping()['lis_code']
-          mapped_tests.add(mapped_test)
-          print(mapped_test)
-      order.tests = '~'.join(mapped_tests)
+      # if not record['order_testid'] is None:
+      #   tests = [t for t in record['order_testid'].split('~')]
+      #   for test in tests:
+      #     mapped_test = Item(self.hclabConnection, test, is_map=True).get_mapping()['lis_code']
+      #     mapped_tests.add(mapped_test)
+      #     print(mapped_test)
+      # order.tests = '~'.join(mapped_tests)
       order.createO01(self.config['file']['hl7_in'], self.config['file']['temp_msg'])
 
-      delete_row(self.hisConnection, record['id'])
+      delete_row(self.hisConnection)
